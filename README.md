@@ -1,4 +1,4 @@
-Connect Four Game
+# Connect Four 
 
 - [ ] Create the arrays 
 
