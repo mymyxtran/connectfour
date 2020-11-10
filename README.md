@@ -1,5 +1,7 @@
 Connect Four Game
 
+- [] Create the arrays 
+
 ### How to compile and create an executable file from the connectfour directory
 g++ -Wall connectfour.cpp -o connectfour.o // executable will be located in same directory
 
