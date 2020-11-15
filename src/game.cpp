@@ -28,6 +28,9 @@ Game::~Game(){
 			delete[] board[i];
 	delete [] board;
 }
+bool Game::isPlaying(){
+	return !winner(inactive_player) && !tie();
+}
 
 void Game::play(){
 	/* Store user input in column and buffer */
@@ -39,7 +42,7 @@ void Game::play(){
 	cout << "Instructions: " << endl <<"Player 1 is " << "(" << p1 << ")" << " and Player 2 is " << "(" << p2 << ")" << endl;
 	cout << "This is your "  <<max_row << " x " << max_col << " game board. To indicate which column you would like to place your chip, "
 			"enter the respective column number." << endl;
-	print_board();
+	printBoard();
 	cout << "Press any key to begin the game!" <<endl << ">>";
 	cin >> buffer;
 	cout << "Beginning the game!" <<endl;
@@ -49,7 +52,7 @@ void Game::play(){
 	 * Case 2: The previous player who just went is now inactive, check if they made a move that made them win
 	 * Case 3: Tie! The board is filled and there is no winner!
 	 */
-	while ( !winner(inactive_player) && !tie() ){
+	while (isPlaying()){
 		if (active_player == p1) {
 			cout << "Player 1's move: " << endl << ">>";
 			cin >> column;
@@ -58,26 +61,26 @@ void Game::play(){
 			cin >> column;
 		}
 		/* Prompt for valid entry! Invalid entry is when a selected column is filled! */
-		while(!valid_move(column)){
+		while(!validMove(column)){
 			cout << "Enter a valid column: " <<endl << ">>";
 			cin >> column;
 		}
 		/* Update game board and print board to show active player new move */
-		update_board(column);
-		print_board();
+		pickColumn(active_player, column);
+		printBoard();
 		/* Update the active player */
-		swap_active_player();
+		swapActivePlayer();
 	}
-	print_result();
+	printResult();
 	return;
 }
 
-void Game::update_board(int col){
+void Game::pickColumn(char player, int col){
 	int row = max_row-1;
 	bool updated = false;
 	while(row >=0 && updated == false){
 		if( board[row][col] == '0'){
-			board[row][col] = active_player ;
+			board[row][col] = player ;
 			updated = true;
 		}
 		row--;
@@ -85,7 +88,7 @@ void Game::update_board(int col){
 	return;
 }
 
-bool Game::valid_move(int col){
+bool Game::validMove(int col){
 	/*check to see if the column has an empty space*/
 	int row = max_row-1;
 	while(row >=0){
@@ -96,7 +99,7 @@ bool Game::valid_move(int col){
 	}
    return false;
 }
-void Game::swap_active_player(){
+void Game::swapActivePlayer(){
 	char temp = active_player;
 	active_player = inactive_player;
 	inactive_player = temp;
@@ -107,14 +110,14 @@ bool Game::winner(char player) {
 	/* Check for winner in all directions for eachposition row, col */
     for(int row = 0 ; row < max_row ; row++){
     	for(int col = 0 ; col < max_col ; col++){
-		bool result = find_winner(player, row, col, 1, 0) ||
-				find_winner(player, row, col, -1, 0) ||
-				find_winner(player, row, col, 0, 1) ||
-				find_winner(player, row, col, 0, -1) ||
-				find_winner( player, row, col, 1, 1) ||
-				find_winner( player, row, col, -1, -1) ||
-				find_winner( player, row, col, -1, 1) ||
-				find_winner( player, row, col, 1, -1);
+		bool result = findWinner(player, row, col, 1, 0) ||
+				findWinner(player, row, col, -1, 0) ||
+				findWinner(player, row, col, 0, 1) ||
+				findWinner(player, row, col, 0, -1) ||
+				findWinner( player, row, col, 1, 1) ||
+				findWinner( player, row, col, -1, -1) ||
+				findWinner( player, row, col, -1, 1) ||
+				findWinner( player, row, col, 1, -1);
 		if(result)
 			return true;
     	}
@@ -123,7 +126,7 @@ bool Game::winner(char player) {
 }
 
 /* Return if winner found*/
-bool Game::find_winner(char player, int row, int col, int rowDelta, int colDelta) {
+bool Game::findWinner(char player, int row, int col, int rowDelta, int colDelta) {
 	bool match = false;
 	int matches = 0;
 	while (row < max_row && row >= 0 && col < max_col && col >= 0) {
@@ -151,7 +154,7 @@ bool Game::tie(){
 	return true;
 }
 
-void Game::print_board(){
+void Game::printBoard(){
 	/* print --- for board borders */
 	for(int col = 0; col < max_col; ++col){
 			cout << "----";
@@ -184,15 +187,26 @@ void Game::print_board(){
 	return;
 }
 
-void Game::print_result(){
+char Game::getWinner(){
 	if(tie()){
-		cout << "Tie game!" << endl;
+		return '=';
 	}else{
-		if(inactive_player == 'R'){
-				cout << "Winner is: Player 1 (R)" << endl;
+		/* The last player who made a move is the winner */
+		if(inactive_player == p1){
+			return p1;
 		} else{
-			cout << "Winner is: Player 2 (B)" << endl;
+			return p2;
 		}
+	}
+}
+
+void Game::printResult(){
+	if( getWinner() == '='){
+		cout << "Tie game!" << endl;
+	}else if (getWinner() == p1){
+		cout << "Winner is: Player 1 " << "(" << getWinner() << ")"<<endl;
+	}else{
+		cout << "Winner is: Player 2 " << "(" << getWinner() << ")" <<endl;
 	}
 }
 

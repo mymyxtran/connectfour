@@ -27,17 +27,20 @@ public:
     char p1, p2;
     char active_player;
     char inactive_player;
-    void play();
+
     /* Logic functions */
-    void swap_active_player();
-    void update_board(int col);
-    bool valid_move(int col);
+    void play();
+    bool isPlaying(); // required func
+    char getWinner(); // required fun
+    void pickColumn(char player, int col); // required fun
+    void swapActivePlayer();
+    bool validMove(int col);
     bool winner(char player);
-    bool find_winner(char player, int row, int col, int rowDelta, int colDelta);
+    bool findWinner(char player, int row, int col, int rowDelta, int colDelta);
     bool tie();
     /* Print board */
-    void print_board();
-    void print_result();
+    void printBoard();
+    void printResult();
 
     /* Constructors & Deconstructors */
 	Game(int row, int col, char player_1, char player_2);
