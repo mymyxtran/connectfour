@@ -44,7 +44,4 @@ public:
     ~Game(); // Need to declare our own to free dynamic memory
 };
 
-
-
-
 #endif /* GAME_H_ */
